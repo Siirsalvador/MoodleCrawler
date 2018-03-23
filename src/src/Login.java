@@ -1,3 +1,4 @@
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
@@ -6,6 +7,12 @@ import java.util.Scanner;
 
 public class Login {
 
+    private static Exception e;
+
+    /**
+     * Authenticates user with the moodle platform
+     * @return returns a session cookie
+     */
     public static String getCookie() {
 
         Connection.Response res = null;
@@ -17,6 +24,7 @@ public class Login {
                     .method(Connection.Method.POST)
                     .execute();
         } catch (Exception e) {
+            Login.e = e;
             errorCheck(e);
             return null;
         }
@@ -24,7 +32,14 @@ public class Login {
         return res.cookie("MoodleSession");
     }
 
-    private static void errorCheck(Exception e) {
+    /**
+     * prints out an error message based of the exception passed to it
+     * Gives the user the option to retry or cancel
+     * @param e exception that occurred
+     * @return null
+     */
+    private static void errorCheck(@NotNull Exception e) {
+
         System.out.println("[AN ERROR OCCURRED]  ++++  " + e.toString());
         System.out.println("[PLEASE CHECK INTERNET CONNECTION!]");
         System.out.println("[PRESS 'Y' TO RETRY AND 'N' TO CANCEL]");
@@ -36,6 +51,7 @@ public class Login {
                 getCookie();
                 break;
             case "N":
+                System.out.println("++++  [EXITING APPLICATION]  ++++");
                 System.exit(0);
             default:
                 System.out.println("[ENTER VALID RESPONSE!]");
